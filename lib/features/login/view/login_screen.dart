@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_drive/repositories/ApiConnection.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,12 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       prefixIcon: const Icon(Icons.password),
+
                     ),
+                    obscureText: true,
                   ),
 
                   Padding(padding: const EdgeInsets.fromLTRB(40.0,20,40.0,0),
                       child:ElevatedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            ApiConnection().GetNotesList("testuser", "testpassword");
+                          },
                           style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll<Color>(Colors.white),
                               foregroundColor: WidgetStatePropertyAll<Color>(Colors.black)
