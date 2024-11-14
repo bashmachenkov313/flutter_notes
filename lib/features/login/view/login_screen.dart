@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_drive/repositories/ApiConnection.dart';
+import 'package:motion_toast/motion_toast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +10,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  String login = "";
+  String password = "";
+  _Get_login_text(String text){
+    setState(() => login = text);
+  }
+
+  _Get_password_text(String text) {
+    setState(() => password = text);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                 TextFormField(
+                  onChanged: _Get_login_text,
                   decoration: InputDecoration(
                     labelText: 'Login',
                     hintText: "Ваш логин",
@@ -41,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   TextFormField(
+                    onChanged: _Get_password_text,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       hintText: "Ваш пароль",
@@ -56,8 +70,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(padding: const EdgeInsets.fromLTRB(40.0,20,40.0,0),
                       child:ElevatedButton(
                           onPressed: (){
-                            ApiConnection().GetNotesList("testuser", "testpassword");
+                            ApiConnection().sign_in(login, password).then((String value){
+                              if(value != "no account"){
+                                Navigator.of(context).pushNamed('/notesList');
+                              }
+                              else{
+                                MotionToast.error(
+                                    title: Text("error"),
+                                    description: Text(value)
+                                ).show(context);
+                              }
+                            });
                           },
+
                           style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll<Color>(Colors.white),
                               foregroundColor: WidgetStatePropertyAll<Color>(Colors.black)
@@ -67,7 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Padding(padding: const EdgeInsets.fromLTRB(40.0,10,40.0,40.0),
                       child:TextButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.of(context).pushNamed('/registration');
+                          },
                       style: const ButtonStyle(
                           backgroundColor: WidgetStatePropertyAll<Color>(Colors.transparent),
                           foregroundColor: WidgetStatePropertyAll<Color>(Colors.black)

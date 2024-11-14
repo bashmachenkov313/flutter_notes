@@ -18,7 +18,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const LoginScreen(),
+      routes: {
+        '/': (context)=> const LoginScreen(),
+        '/registration': (context) => const RegistrationScreen(),
+        '/notesList': (context) => const NotesListScreen(),
+        '/note': (context) => const NoteScreen()
+      },
     );
   }
 }
