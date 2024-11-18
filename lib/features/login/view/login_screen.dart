@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String login = "";
   String password = "";
+  String token = "";
   _Get_login_text(String text){
     setState(() => login = text);
   }
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text("Авторизация"),
         centerTitle: true,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.greenAccent,
       ),
       body: Form(
         child: Column(
@@ -72,7 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: (){
                             ApiConnection().sign_in(login, password).then((String value){
                               if(value != "no account"){
-                                Navigator.of(context).pushNamed('/notesList');
+                                token = value;
+                                Navigator.of(context).pushNamed('/notesList',arguments: token);
                               }
                               else{
                                 MotionToast.error(

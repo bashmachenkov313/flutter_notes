@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_drive/features/notes_list/widgets/notes_list_tile.dart';
+import 'package:test_drive/models/Note.dart';
+import 'package:test_drive/repositories/ApiConnection.dart';
 
 class NotesListScreen extends StatefulWidget {
   const NotesListScreen({super.key});
@@ -9,31 +12,59 @@ class NotesListScreen extends StatefulWidget {
 
 class _NotesListScreenState extends State<NotesListScreen> {
 
+  late String token = "";
+
+  @override
+  void didChangeDependencies() async{
+    final args  = ModalRoute.of(context)?.settings.arguments;
+    if(args != null){
+      token = args as String;
+    }
+    await _loadNotes();
+    super.didChangeDependencies();
+  }
+  List<Note>? _NotesList;
+
+  Future<void> _loadNotes() async{
+    _NotesList = await ApiConnection().GetNotesList(token);
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ваши заметки"),
         centerTitle: true,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.greenAccent,
       ),
       body:Column(
         children: <Widget>[
-          Flexible(child: Container(
-            child: ListView.separated(
+          Flexible(
+              child: Container(
+                decoration:BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    style: BorderStyle.solid,
+                    width: 1.0,
+                  ),
+                ),
+            child: (_NotesList == null)
+            ? const Center(child:CircularProgressIndicator())
+            : ListView.separated(
+              itemCount: _NotesList!.length,
               separatorBuilder: (context,index) => const Divider(),
-              itemCount: 16,
               itemBuilder: (context,index) {
-                return ListTile(
-                  title: Text("1"),
-                );
+                final note = _NotesList![index];
+                return  Notes_List_Tile(note: note);
               },
             ),
           )),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Align(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0,10.0,0,10.0),
+                child: Align(
                 alignment: Alignment.bottomCenter,
                 child:  ElevatedButton(
                   onPressed: (){},
@@ -44,16 +75,20 @@ class _NotesListScreenState extends State<NotesListScreen> {
                   child: const Text("Выйти"),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child:  ElevatedButton(
-                  onPressed: (){},
-                  style: const ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll<Color>(Colors.greenAccent),
-                    foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0,10.0,0,10.0) ,
+                child:Align(
+                  alignment: Alignment.bottomCenter,
+                  child:  ElevatedButton(
+                    onPressed: (){},
+                    style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color>(Colors.greenAccent),
+                      foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
+                    ),
+                    child: const Text("Добавить"),
                   ),
-                  child: const Text("Добавить"),
-                ),
+                ) ,
               )
             ],
           )

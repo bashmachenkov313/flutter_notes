@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_drive/repositories/ApiConnection.dart';
+import 'package:motion_toast/motion_toast.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -9,13 +11,24 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
 
+  String login = "";
+  String password = "";
+
+  _Get_login_text(String text){
+    setState(() => login = text);
+  }
+
+  _Get_password_text(String text) {
+    setState(() => password = text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Создание аккаунта"),
         centerTitle: true,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.greenAccent,
       ),
       body: Form(
         child: Column(
@@ -27,6 +40,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     TextFormField(
+                      onChanged:_Get_login_text,
                       decoration: InputDecoration(
                         labelText: 'Login',
                         hintText: "Желаемый логин",
@@ -40,6 +54,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       height: 20,
                     ),
                     TextFormField(
+                      onChanged:_Get_password_text,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         hintText: "Желаемый пароль",
@@ -51,7 +66,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     Padding(padding: const EdgeInsets.fromLTRB(40.0,20,40.0,0),
                       child:ElevatedButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          ApiConnection().register(login, password).then((String value){
+                              MotionToast.info(
+                                  title: const Text("Уведомление!"),
+                                  description: Text(value)
+                              ).show(context);
+                          });
+
+                        },
                         style: const ButtonStyle(
                             backgroundColor: WidgetStatePropertyAll<Color>(Colors.white),
                             foregroundColor: WidgetStatePropertyAll<Color>(Colors.black)
