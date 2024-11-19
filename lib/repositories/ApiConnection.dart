@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:test_drive/models/Note.dart';
 
 class ApiConnection{
@@ -34,7 +31,8 @@ class ApiConnection{
     final response = await Dio().delete(
         "$link/notes/delete-note/$token/$id"
     );
-    return response.toString();
+    String data = response.data;
+    return data;
   }
   Future<List<Note>> GetNotesList(String token) async{
     final response = await Dio().get(
@@ -50,18 +48,21 @@ class ApiConnection{
     final response = await Dio().put(
         "$link/notes/update-note/$token/$id/$title/$text"
     );
-    return response.toString();
+    String data = response.data;
+    return data;
   }
   Future<String> get_note_content(String token,int id) async{
     final response = await Dio().get(
         "$link/notes/get-note-content/$token/$id"
     );
-    return response.toString();
+    String data = response.data;
+    return data;
   }
   Future<String> new_note(String token,String title,String text) async{
     final response = await Dio().post(
         "$link/notes/add-note/$token/$title/$text"
     );
-    return response.toString();
+    String data = response.data;
+    return data;
   }
 }

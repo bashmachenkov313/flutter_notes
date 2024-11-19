@@ -4,6 +4,6 @@ class Note{
 
   const Note({
     required this.id,
-    required this.title
+    required this.title,
   });
 }

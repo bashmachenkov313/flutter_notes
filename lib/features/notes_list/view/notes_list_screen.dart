@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:test_drive/features/notes_list/widgets/notes_list_tile.dart';
 import 'package:test_drive/models/Note.dart';
 import 'package:test_drive/repositories/ApiConnection.dart';
@@ -12,7 +13,7 @@ class NotesListScreen extends StatefulWidget {
 
 class _NotesListScreenState extends State<NotesListScreen> {
 
-  late String token = "";
+  String token = "";
 
   @override
   void didChangeDependencies() async{
@@ -33,6 +34,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
         title: const Text("Ваши заметки"),
         centerTitle: true,
         backgroundColor: Colors.greenAccent,
@@ -48,14 +50,14 @@ class _NotesListScreenState extends State<NotesListScreen> {
                     width: 1.0,
                   ),
                 ),
-            child: (_NotesList == null)
+            child: (_NotesList == null || _NotesList!.length == 0 )
             ? const Center(child:CircularProgressIndicator())
             : ListView.separated(
               itemCount: _NotesList!.length,
               separatorBuilder: (context,index) => const Divider(),
               itemBuilder: (context,index) {
                 final note = _NotesList![index];
-                return  Notes_List_Tile(note: note);
+                return  Notes_List_Tile(note: note,token: token);
               },
             ),
           )),
@@ -67,7 +69,15 @@ class _NotesListScreenState extends State<NotesListScreen> {
                 child: Align(
                 alignment: Alignment.bottomCenter,
                 child:  ElevatedButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    ApiConnection().log_out(token).then((String value){
+                      MotionToast.info(
+                          title: const Text("Уведомление!"),
+                          description: Text(value)
+                      ).show(context);
+                      Navigator.pop(context);
+                    });
+                  },
                   style: const ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll<Color>(Colors.redAccent),
                     foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
@@ -81,7 +91,12 @@ class _NotesListScreenState extends State<NotesListScreen> {
                 child:Align(
                   alignment: Alignment.bottomCenter,
                   child:  ElevatedButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      ApiConnection().new_note(token,"New title","Your text").then((String value){
+                        _NotesList!.add(Note(id: int.parse(value), title: "New title"));
+                        _loadNotes();
+                      });
+                    },
                     style: const ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll<Color>(Colors.greenAccent),
                       foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
